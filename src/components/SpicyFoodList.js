@@ -1,24 +1,14 @@
 import React, { useState } from "react";
-import { spicyFoods, getNewRandomSpicyFood } from "../data";
-// Update component to return some JSX elements based on this array
+import { spicyFoods, getNewSpicyFood } from "../data";
+
 function SpicyFoodList() {
+  const [filterBy, setFilterBy] = useState("All");
   const [foods, setFoods] = useState(spicyFoods);
 
   function handleAddFood() {
-    const newFood = getNewRandomSpicyFood();
+    const newFood = getNewSpicyFood();
     const newFoodArray = [...foods, newFood];
-    setFoods(newFoodArray)
-    console.log(newFood);
-  }
-
-  const foodList = foods.map((food) => (
-    <li key={food.id} onClick={() => handleClick(food.id)}>
-      {food.name} | Heat: {food.heatLevel} | Cuisine: {food.cuisine}
-    </li>
-  ));
-  function handleClick(id){
-    const newFoodArray= foods.filter((food)=>food.id !==id)
-    setFoods(newFoodArray)
+    setFoods(newFoodArray);
   }
 
   function handleLiClick(id) {
@@ -35,10 +25,33 @@ function SpicyFoodList() {
     setFoods(newFoodArray);
   }
 
-  
+  function handleFilterChange(event) {
+    setFilterBy(event.target.value);
+  }
+
+  const foodsToDisplay = foods.filter((food) => {
+    if (filterBy === "All") {
+      return true;
+    } else {
+      return food.cuisine === filterBy;
+    }
+  });
+
+  const foodList = foodsToDisplay.map((food) => (
+    <li key={food.id} onClick={() => handleLiClick(food.id)}>
+      {food.name} | Heat: {food.heatLevel} | Cuisine: {food.cuisine}
+    </li>
+  ));
 
   return (
     <div>
+      <select name="filter" onChange={handleFilterChange}>
+        <option value="All">All</option>
+        <option value="American">American</option>
+        <option value="Sichuan">Sichuan</option>
+        <option value="Thai">Thai</option>
+        <option value="Mexican">Mexican</option>
+      </select>
       <button onClick={handleAddFood}>Add New Food</button>
       <ul>{foodList}</ul>
     </div>
